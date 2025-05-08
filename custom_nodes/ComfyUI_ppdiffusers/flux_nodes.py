@@ -18,8 +18,7 @@ import numpy as np
 import paddle
 import torch  # for convert data
 from comfy.utils import ProgressBar
-
-from ppdiffusers import (
+from ppdiffusers import ( 
     StableDiffusionXLImg2ImgPipeline,
     StableDiffusionXLInpaintPipeline,
     StableDiffusionXLPipeline,
@@ -83,10 +82,10 @@ class PaddleFLUXText2ImagePipe:
                         "max": 1000,
                     },
                 ),
-                "width": ("INT", {"default": 512, "min": 1, "max": 8192}),
-                "height": ("INT", {"default": 768, "min": 1, "max": 8192}),
+                "width": ("INT", {"default": 1024, "min": 1, "max": 8192}),
+                "height": ("INT", {"default": 1024, "min": 1, "max": 8192}),
                 "number": ("INT", {"default": 1, "min": 1, "max": 100}),
-                "seed": ("INT", {"default": 0, "min": 0, "max": 99999999999999999999999}),
+                "seed": ("INT", {"default": 1024, "min": 0, "max": 99999999999999999999999}),
                 "cfg": (
                     "FLOAT",
                     {
@@ -117,8 +116,8 @@ class PaddleFLUXText2ImagePipe:
             }
         }
 
-    RETURN_TYPES = ("LATENT",)
-    RETURN_NAMES = ("latent",)
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image",)
     FUNCTION = "sample"
     CATEGORY = "🚢 paddlemix/ppdiffusers/pipelines"
 
@@ -137,11 +136,7 @@ class PaddleFLUXText2ImagePipe:
             num_images_per_prompt=number,
             num_inference_steps=steps,
             guidance_scale=cfg,
-            output_type="latent",
-            callback=lambda step, timestep, latents: progress_bar.update_absolute(
-                value=step, total=steps, preview=None
-            ),
-            callback_steps=1,
+            output_type="pil",
         ).images
 
         return (latent,)
